@@ -223,3 +223,15 @@ input:focus + .slider {
 input:checked + .slider:before {
   transform: translateX(13px);
 }
+
+/*----------------------------- Visual hack ------------------------------*/
+
+.zero{
+    width: 142px;
+}
+
+#history1{    
+	border-bottom: azure;
+	border-bottom-width: 1px;
+	border-bottom-style: dashed;
+}

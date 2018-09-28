@@ -10,10 +10,9 @@ var calculator = {
         try {
             math.eval(this.operation);
             this.evaluation = math.eval(this.operation);
-            this.history.push(this.evaluation);
+            this.history.push(this.operation + ' = ' + this.evaluation);
             this.history.shift();
             
-            this.operation = "";
             return true;
         } catch (e) {
             if (e instanceof SyntaxError) { 
@@ -130,8 +129,13 @@ $('#equal').on('click', function () {
     calculator.evaluate();
     console.log(calculator);
 
-    $('#display1').val("");
     $('#display2').val(calculator.evaluation);
+
+    $('#history1').val(calculator.history[4]);
+    $('#history2').val(calculator.history[3]);
+    $('#history3').val(calculator.history[2]);
+    $('#history4').val(calculator.history[1]);
+    $('#history5').val(calculator.history[0]);
 })
 
 $('#ans').on('click', function () {    
