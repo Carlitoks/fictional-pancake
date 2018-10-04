@@ -1,118 +1,64 @@
 // Calculator
 
+var log = {
+    maxLength: 5,
+    history: [],
+
+    add(op, val){
+        this.history.push({ operation: op , value: val});
+        if(this.history.length > this.maxLength){ this.history.shift(); }
+    },
+
+    getlog(pos){
+        // check on firefox before send 
+        return (pos < this.history.length)? `${this.history[pos].operation} =  ${this.history[pos].value}` : '';
+    }
+};
+//console.log(log.getlog(0));
+
 var calculator = {
-    answer: "",
     operation: "",
-    evaluation: "",
-    history: ['','','','',''],
+    result: "",
+    
 
     evaluate: function() {
         try {
             math.eval(this.operation);
-            this.evaluation = math.eval(this.operation);
-            this.history.push(this.operation + ' = ' + this.evaluation);
-            this.history.shift();
+            this.result = math.eval(this.operation);
+            log.add(this.operation, this.result);
             
             return true;
         } catch (e) {
             if (e instanceof SyntaxError) { 
-                this.evaluation = "E";
+                this.result = "E";
                 return false;
             }
             else {
-                this.evaluation = "UE";
+                this.result = "UE";
                 return false;
             }
         }
     }
-}
+};
 
 // default display values
 $('#display1').val("");
 $('#display2').val("");
 
 // Digits
-$('#zero').on('click', function () {
-    calculator.operation = calculator.operation + "0";
-    $('#display1').val($('#display1').val() + '\u0030');
-})
 
+$('.digit').on('click', function (event) {
 
-$('#one').on('click', function () {
-    calculator.operation = calculator.operation + "1";
-    $('#display1').val($('#display1').val() + '\u0031');
-})
-
-$('#two').on('click', function () {
-    calculator.operation = calculator.operation + "2";
-    $('#display1').val($('#display1').val() + '\u0032');
-})
-
-$('#three').on('click', function () {
-    calculator.operation = calculator.operation + "3";
-    $('#display1').val($('#display1').val() + '\u0033');
-})
-
-$('#four').on('click', function () {
-    calculator.operation = calculator.operation + "4";
-    $('#display1').val($('#display1').val() + '\u0034');
-})
-
-$('#five').on('click', function () {
-    calculator.operation = calculator.operation + "5";
-    $('#display1').val($('#display1').val() + '\u0035');
-})
-
-$('#six').on('click', function () {
-    calculator.operation = calculator.operation + "6";
-    $('#display1').val($('#display1').val() + '\u0036');
-})
-
-$('#seven').on('click', function () {
-    calculator.operation = calculator.operation + "7";
-    $('#display1').val($('#display1').val() + '\u0037');
-})
-
-$('#eight').on('click', function () {
-    calculator.operation = calculator.operation + "8";
-    $('#display1').val($('#display1').val() + '\u0038');
-})
-
-$('#nine').on('click', function () {
-    calculator.operation = calculator.operation + "9";
-    $('#display1').val($('#display1').val() + '\u0039');
-})
-              
-$('#decimal').on('click', function () {
-    calculator.operation = calculator.operation + ".";
-    $('#display1').val($('#display1').val() + '\u002e');
-})
-
-// Operators
-$('#add').on('click', function () {
-    calculator.operation = calculator.operation + "+";
-    $('#display1').val($('#display1').val() + '\u002b');
-})
-
-$('#subtract').on('click', function () {
-    calculator.operation = calculator.operation + "-";
-    $('#display1').val($('#display1').val() + '\u2212');
-})
-
-$('#multiply').on('click', function () {
-    calculator.operation = calculator.operation + "*";
-    $('#display1').val($('#display1').val() + '\u00d7');
-})
-
-$('#divide').on('click', function () {
-    calculator.operation = calculator.operation + "/";
-    $('#display1').val($('#display1').val() + '\u00f7');
-})
+    console.log(event.target);
+    
+    calculator.operation = calculator.operation + event.target.value;
+    $('#display1').val($('#display1').val() + event.target.innerHTML);
+});
 
 // Clear
 $('#clear').on('click', function () {
     calculator.operation = "",
-    calculator.evaluation = "",
+    calculator.result = "",
     $('#display1').val("");
     $('#display2').val("");
 })
@@ -123,25 +69,34 @@ $('#backspace').on('click', function () {
     $('#display1').val($('#display1').val().slice(0, $('#display1').val().length-1));
 })
 
+$('#ans').on('click', function () {    
+    
+    if(calculator.result){ 
+        calculator.operation = calculator.operation + calculator.result;
+        $('#display1').val($('#display1').val() + 'Ans');
+    }
+})
+
 // Equal
-$('#equal').on('click', function () {
+$('#equal').on('click', equal);
+// Equal on enter
+function enter( event) {
+
+    if (event.keyCode == 13) { 
+        equal();
+    }
+}
+
+function equal() {
 
     calculator.evaluate();
     console.log(calculator);
 
-    $('#display2').val(calculator.evaluation);
+    $('#display2').val(calculator.result);
 
-    $('#history1').val(calculator.history[4]);
-    $('#history2').val(calculator.history[3]);
-    $('#history3').val(calculator.history[2]);
-    $('#history4').val(calculator.history[1]);
-    $('#history5').val(calculator.history[0]);
-})
-
-$('#ans').on('click', function () {    
-    
-    if(calculator.evaluation){ 
-        calculator.operation = calculator.operation + calculator.evaluation;
-        $('#display1').val($('#display1').val() + 'Ans');
-    }
-})
+    $('#history1').val(log.getlog(0));
+    $('#history2').val(log.getlog(1));
+    $('#history3').val(log.getlog(2));
+    $('#history4').val(log.getlog(3));
+    $('#history5').val(log.getlog(4));
+}
