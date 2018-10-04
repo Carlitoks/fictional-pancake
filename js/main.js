@@ -17,7 +17,7 @@ var log = {
 //console.log(log.getlog(0));
 
 var calculator = {
-    ans: "",
+    ans: 0,
     operation: "",
     result: "",
 
@@ -51,15 +51,17 @@ var calculator = {
         return this.result;
     },
     isAns: function(){
-        return ans;
+        return this.ans;
     },
     addAns: function(){
         this.operation = this.operation + this.result;
-        this.ans = this.result.length;
+        this.ans = this.result.toString().length;
     },
-    backspace: function(){
-        if(ans){ this.operation = this.operation.slice(0, this.operation.length-this.ans-1);}
-        else{ this.operation = this.operation.slice(0, this.operation.length-1); }
+    backspace: function(){   
+        if(this.ans){
+            this.operation = this.operation.slice(0, this.operation.length-this.ans);
+            this.ans = 0;
+        } else { this.operation = this.operation.slice(0, this.operation.length - 1);}
     }
 };
 
@@ -83,8 +85,10 @@ $('#clear').on('click', function () {
 
 // Backspace
 $('#backspace').on('click', function () {
+    if (calculator.isAns()) { $('#display1').val($('#display1').val().slice(0, $('#display1').val().length - 3)); }
+    else{ $('#display1').val($('#display1').val().slice(0, $('#display1').val().length-1)); }
+    
     calculator.backspace();
-    $('#display1').val($('#display1').val().slice(0, $('#display1').val().length-1));
 })
 
 $('#ans').on('click', function () {    
