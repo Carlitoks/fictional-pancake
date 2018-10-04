@@ -17,16 +17,17 @@ var log = {
 //console.log(log.getlog(0));
 
 var calculator = {
+    ans: "",
     operation: "",
     result: "",
-    
 
     evaluate: function() {
         try {
             math.eval(this.operation);
             this.result = math.eval(this.operation);
             log.add(this.operation, this.result);
-            
+            this.operation = "";
+
             return true;
         } catch (e) {
             if (e instanceof SyntaxError) { 
@@ -38,6 +39,27 @@ var calculator = {
                 return false;
             }
         }
+    },
+    edit: function(val){
+        this.operation += val;
+    },
+    clear: function(){
+        this.operation = "";
+        this.result = "";
+    },
+    getResult: function(){
+        return this.result;
+    },
+    isAns: function(){
+        return ans;
+    },
+    addAns: function(){
+        this.operation = this.operation + this.result;
+        this.ans = this.result.length;
+    },
+    backspace: function(){
+        if(ans){ this.operation = this.operation.slice(0, this.operation.length-this.ans-1);}
+        else{ this.operation = this.operation.slice(0, this.operation.length-1); }
     }
 };
 
@@ -48,31 +70,27 @@ $('#display2').val("");
 // Digits
 
 $('.digit').on('click', function (event) {
-
-    console.log(event.target);
-    
-    calculator.operation = calculator.operation + event.target.value;
+    calculator.edit(event.target.value);
     $('#display1').val($('#display1').val() + event.target.innerHTML);
 });
 
 // Clear
 $('#clear').on('click', function () {
-    calculator.operation = "",
-    calculator.result = "",
+    calculator.clear();
     $('#display1').val("");
     $('#display2').val("");
 })
 
 // Backspace
 $('#backspace').on('click', function () {
-    calculator.operation = calculator.operation.slice(0, calculator.operation.length-1);
+    calculator.backspace();
     $('#display1').val($('#display1').val().slice(0, $('#display1').val().length-1));
 })
 
 $('#ans').on('click', function () {    
     
-    if(calculator.result){ 
-        calculator.operation = calculator.operation + calculator.result;
+    if(calculator.getResult()){ 
+        calculator.addAns();
         $('#display1').val($('#display1').val() + 'Ans');
     }
 })
@@ -81,18 +99,14 @@ $('#ans').on('click', function () {
 $('#equal').on('click', equal);
 // Equal on enter
 function enter( event) {
-
-    if (event.keyCode == 13) { 
-        equal();
-    }
+    if (event.keyCode == 13) { equal(); }
 }
 
 function equal() {
-
     calculator.evaluate();
-    console.log(calculator);
 
-    $('#display2').val(calculator.result);
+    $('#display2').val(calculator.getResult());
+    $('#display1').val("");
 
     $('#history1').val(log.getlog(0));
     $('#history2').val(log.getlog(1));
